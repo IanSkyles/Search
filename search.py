@@ -82,48 +82,73 @@ def depthFirstSearch(problem):
     To get started, you might want to try some of these simple commands to
     understand the search problem that is being passed in:
 
-    print "Start:", problem.getStartState()
-    print "Is the start a goal?", problem.isGoalState(problem.getStartState())
-    print "Start's successors:", problem.getSuccessors(problem.getStartState())
+    print "Start:", problem.getStartState() - (5,5) - a tuple
+    print "Is the start a goal?", problem.isGoalState(problem.getStartState()) - boolean
+    print "Start's successors:", problem.getSuccessors(problem.getStartState()) - [((5, 4), 'South', 1), ((4, 5), 'West', 1)]
     """
     "*** YOUR CODE HERE ***"
+    """
     from game import Directions
     from util import Stack
     n = Directions.NORTH
     e = Directions.EAST
     s = Directions.SOUTH
     w = Directions.WEST
+    """
+
     "check if null?"
-    startLocation = problem.getStartState()
-    stackToVisit = util.Stack()
-    visited = ()
-    path = []
-    visited.add(startLocation)
-    StackToVisit.push(startLocation, path)
+    fringe = util.Stack()
+    visited = set()
+    fringe.push((problem.getStartState(), []))
 
-    while not stackToVisit.isEmpty():
-        node = stackToVisit.pop()
-        if problem.isGoalState(node[0]): #we are expanding goal state
-            retun path
-
-        for successor in problem.getSuccessors(stackToVisit):
-            if successor[0] not in visited:
-                newPath = list(path)
-                newPath.append(successor[1]) #append new direction
-                visited.add(successor)
-                stackToVisit.push(successor, newPath)
-
-    return path
+    while not fringe.isEmpty():
+        currentCordinates, path = fringe.pop()
+        if problem.isGoalState(currentCordinates): #we are expanding goal state
+            return path
+        if currentCordinates not in visited:
+            visited.add(currentCordinates)
+            for nextCoordinate, direction, cost in problem.getSuccessors(currentCordinates):
+                if nextCoordinate not in visited:
+                    print (direction)
+                    fringe.push((nextCoordinate, path+[direction]))
+    return [] #no path
 
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    fringe = util.Queue()
+    visited = set()
+    fringe.push((problem.getStartState(), []))
+
+    while not fringe.isEmpty():
+        currentCordinates, path = fringe.pop()
+        if problem.isGoalState(currentCordinates): #we are expanding goal state
+            return path
+        if currentCordinates not in visited:
+            visited.add(currentCordinates)
+            for nextCoordinate, direction, cost in problem.getSuccessors(currentCordinates):
+                if nextCoordinate not in visited:
+                    print (direction)
+                    fringe.push((nextCoordinate, path+[direction]))
+    return [] #no path
 
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    fringe = util.PriorityQueue()
+    #better way to do below? Can't access path otherwise.
+    fringe.push((problem.getStartState(), 0, []), 0)
+    visited = {}
+    while not fringe.isEmpty():
+        currentCordinates, pathCost, path = fringe.pop()
+        if problem.isGoalState(currentCordinates): #we are expanding goal state
+            return path
+        #visited.add(currentCordinates, pathCost)
+        visited[currentCordinates] = pathCost
+        for nextCoordinate, direction, cost in problem.getSuccessors(currentCordinates):
+            if nextCoordinate not in visited or visited[nextCoordinate] > cost + pathCost:
+                fringe.push((nextCoordinate, pathCost+cost,  path+[direction]), pathCost+cost)
+    return [] #no path
 
 def nullHeuristic(state, problem=None):
     """
