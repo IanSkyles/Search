@@ -109,7 +109,6 @@ def depthFirstSearch(problem):
             visited.add(currentCordinates)
             for nextCoordinate, direction, cost in problem.getSuccessors(currentCordinates):
                 if nextCoordinate not in visited:
-                    print (direction)
                     fringe.push((nextCoordinate, path+[direction]))
     return [] #no path
 
@@ -128,7 +127,6 @@ def breadthFirstSearch(problem):
             visited.add(currentCordinates)
             for nextCoordinate, direction, cost in problem.getSuccessors(currentCordinates):
                 if nextCoordinate not in visited:
-                    print (direction)
                     fringe.push((nextCoordinate, path+[direction]))
     return [] #no path
 
@@ -160,8 +158,21 @@ def nullHeuristic(state, problem=None):
 def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
-
+    fringe = util.PriorityQueue()
+    #better way to do below? Can't access path otherwise.
+    fringe.push((problem.getStartState(), 0, []), 0)
+    visited = {}
+    while not fringe.isEmpty():
+        currentCordinates, pathCost, path = fringe.pop()
+        if problem.isGoalState(currentCordinates): #we are expanding goal state
+            return path
+        #visited.add(currentCordinates, pathCost)
+        visited[currentCordinates] = pathCost
+        for nextCoordinate, direction, cost in problem.getSuccessors(currentCordinates):
+            if nextCoordinate not in visited or visited[nextCoordinate] > cost + pathCost:
+                fringe.push((nextCoordinate, pathCost+cost + heuristic(nextCoordinate, problem),  
+                    path+[direction]), pathCost+cost + heuristic(nextCoordinate, problem))
+    return [] #no path
 
 # Abbreviations
 bfs = breadthFirstSearch
