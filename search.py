@@ -158,6 +158,8 @@ def nullHeuristic(state, problem=None):
 def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
     "*** YOUR CODE HERE ***"
+    """ We need to add the total path cost so far, the cost of the new path, and the cost of the new hueristic. We need to 
+    subtract the heuristic of the last node (since it was in the info of the fringe that we popped from."""
     fringe = util.PriorityQueue()
     #better way to do below? Can't access path otherwise.
     fringe.push((problem.getStartState(), 0, []), 0)
@@ -167,11 +169,11 @@ def aStarSearch(problem, heuristic=nullHeuristic):
         if problem.isGoalState(currentCordinates): #we are expanding goal state
             return path
         #visited.add(currentCordinates, pathCost)
-        visited[currentCordinates] = pathCost
+        visited[currentCordinates] = pathCost 
         for nextCoordinate, direction, cost in problem.getSuccessors(currentCordinates):
-            if nextCoordinate not in visited or visited[nextCoordinate] > cost + pathCost:
-                fringe.push((nextCoordinate, pathCost+cost + heuristic(nextCoordinate, problem),  
-                    path+[direction]), pathCost+cost + heuristic(nextCoordinate, problem))
+            if (nextCoordinate not in visited) or (visited[nextCoordinate] > (cost + pathCost)):
+                fringe.push((nextCoordinate, pathCost+cost + heuristic(nextCoordinate, problem)- heuristic(currentCordinates, problem),  
+                    path+[direction]), pathCost+cost + heuristic(nextCoordinate, problem) - heuristic(currentCordinates, problem))
     return [] #no path
 
 # Abbreviations
