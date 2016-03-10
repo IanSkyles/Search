@@ -429,15 +429,15 @@ def cornersHeuristic(state, problem):
 
     "*** YOUR CODE HERE ***"
     #if we have reached the goal it should be 0
-    estimatedDistance = 0
+    estimatedClosestDistance = 0
     if problem.isGoalState(state):
-        return estimatedDistance
+        return estimatedClosestDistance
         position, corners = state
     for corner in corners:
         toCorner = util.manhattanDistance(position, corner)
-        if estimatedDistance < toCorner:
-            estimatedDistance = toCorner            
-    return estimatedDistance 
+        if estimatedClosestDistance < toCorner:
+            estimatedClosestDistance = toCorner            
+    return estimatedClosestDistance 
     
 class AStarCornersAgent(SearchAgent):
     "A SearchAgent for FoodSearchProblem using A* and your foodHeuristic"
@@ -531,7 +531,12 @@ def foodHeuristic(state, problem):
     """
     position, foodGrid = state
     "*** YOUR CODE HERE ***"
-    return 0
+    estimatedClosestDistance = 0
+    for foodCoordinatePair in foodGrid.asList():
+        distanceBetweenPoints = util.manhattanDistance(position, foodCoordinatePair)
+        if distanceBetweenPoints > estimatedClosestDistance:
+            estimatedClosestDistance = distanceBetweenPoints
+    return estimatedClosestDistance
 
 class ClosestDotSearchAgent(SearchAgent):
     "Search for all food using a sequence of searches"
