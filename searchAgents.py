@@ -428,78 +428,17 @@ def cornersHeuristic(state, problem):
     walls = problem.walls # These are the walls of the maze, as a Grid (game.py)
 
     "*** YOUR CODE HERE ***"
-    return 0 # Default to trivial solution
-    def getSuccessors(self, state):
-        """
-        Returns successor states, the actions they require, and a cost of 1.
-         As noted in search.py:
-            For a given state, this should return a list of triples, (successor,
-            action, stepCost), where 'successor' is a successor to the current
-            state, 'action' is the action required to get there, and 'stepCost'
-            is the incremental cost of expanding to that successor
-        """
-        
-        successors = []
-        for action in [Directions.NORTH, Directions.SOUTH, Directions.EAST, Directions.WEST]:
-            # Add a successor state to the successor list if the action is legal
-            # Here's a code snippet for figuring out whether a new position hits a wall:
-            #   x,y = currentPosition
-            #   dx, dy = Actions.directionToVector(action)
-            #   nextx, nexty = int(x + dx), int(y + dy)
-            #   hitsWall = self.walls[nextx][nexty]
-
-            "*** YOUR CODE HERE ***"
-            currPos, cornersLeft = state
-            x, y = currPos
-            dx, dy = Actions.directionToVector(action)
-            nextx, nexty = int(x + dx), int(y + dy)
-            hitsWall = self.walls[nextx][nexty]
-            nextPos = (nextx, nexty)
-            lst = []
-            for corner in cornersLeft:
-                if corner != nextPos:
-                    lst.append(corner)
-            toVisit = tuple(lst)
-            if not hitsWall:
-                nextState = (nextPos, toVisit)
-                successors.append((nextState, action, 1))
-        self._expanded += 1 # DO NOT CHANGE
-        return successors
-
-    def getCostOfActions(self, actions):
-        """
-        Returns the cost of a particular sequence of actions.  If those actions
-        include an illegal move, return 999999.  This is implemented for you.
-        """
-        if actions == None: return 999999
-        x,y= self.startingPosition
-        for action in actions:
-            dx, dy = Actions.directionToVector(action)
-            x, y = int(x + dx), int(y + dy)
-            if self.walls[x][y]: return 999999
-        return len(actions)
-
-def cornersHeuristic(state, problem):
-    """
-    A heuristic for the CornersProblem that you defined.
-      state:   The current search state
-               (a data structure you chose in your search problem)
-      problem: The CornersProblem instance for this layout.
-    This function should always return a number that is a lower bound on the
-    shortest path from the state to a goal of the problem; i.e.  it should be
-    admissible (as well as consistent).
-    """
-    corners = problem.corners # These are the corner coordinates
-    walls = problem.walls # These are the walls of the maze, as a Grid (game.py)
-
-    "*** YOUR CODE HERE ***"
-    if problem.isGoalState(state):
-        return 0
-    position, fringe = state
+    #if we have reached the goal it should be 0
     estimatedDistance = 0
-    for corner in fringe:
-        estimatedDistance = max(estimatedDistance, util.manhattanDistance(position, corner))
-    return estimatedDistance
+    if problem.isGoalState(state):
+        return estimatedDistance
+        position, corners = state
+    for corner in corners:
+        toCorner = util.manhattanDistance(position, corner)
+        if estimatedDistance < toCorner:
+            estimatedDistance = toCorner            
+    return estimatedDistance 
+    
 class AStarCornersAgent(SearchAgent):
     "A SearchAgent for FoodSearchProblem using A* and your foodHeuristic"
     def __init__(self):
